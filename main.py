@@ -1,7 +1,9 @@
-from numpy import angle, pi, tan
+from numpy import pi, tan
 from scipy import signal
 from scipy.io import wavfile
 import numpy as np
+
+
 """
 HASAN FURKAN BALKAÇ 
 150150056
@@ -85,7 +87,11 @@ def main():
     substract_data_Africa = data_Africa - filtered_data_Africa
     
     wavfile.write('AfricaBPF.wav',samplerate_Africa,filtered_data_Africa.astype(np.int16))
+    print("------------------------------------------")
+    print("AfricaBPF.wav Saved")
     wavfile.write('AfricaBSP.wav',samplerate_Africa,substract_data_Africa.astype(np.int16))
+    print("------------------------------------------")
+    print("AfricaBSP.wav Saved")
 
     samplerate_Winner, data_Winner = wavfile.read("WinnerTakesAll.wav")
 
@@ -95,7 +101,11 @@ def main():
     substract_data_Winner = data_Winner - filtered_data_Winner
     
     wavfile.write('WinnerTakesAllBPF.wav',samplerate_Winner,filtered_data_Winner.astype(np.int16))
+    print("------------------------------------------")
+    print("WinnerTakesAllBPF.wav Saved")
     wavfile.write('WinnerTakesAllBSP.wav',samplerate_Winner,substract_data_Winner.astype(np.int16))
+    print("------------------------------------------")
+    print("WinnerTakesAllBSP.wav Saved")
 
 if __name__ == "__main__":
     main()
