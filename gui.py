@@ -89,7 +89,6 @@ class myFilter():
 
         return filtered_data
 
-
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
     samplerate, data = 0,0
@@ -188,7 +187,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.frequency_calculate(central_freq,bandwith)
         except:
             self.errorPopUp()
-        print(central_freq, bandwith)
+        #print(central_freq, bandwith)
         if self.radioButton.isChecked(): #BANDPASS RADIO BUTTON SELECTED
             #print("bandpass_selected")
             #print(self.f_low, self.f_high) 
