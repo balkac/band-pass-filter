@@ -1,9 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets ,QtMultimedia
+from PyQt5.QtWidgets import QMessageBox
 from scipy.io import wavfile
 from numpy import pi, tan
 from scipy import signal
 from scipy.io import wavfile
 import numpy as np
+from pathlib import Path
+
+from scipy.signal.wavelets import qmf
 
 """
 HASAN FURKAN BALKAÇ 
@@ -177,43 +181,75 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     """
         
     def save(self):
-        print("Save button")
-        central_freq = int(self.lineEdit.text())
-        bandwith = int(self.lineEdit_2.text())
-        self.frequency_calculate(central_freq,bandwith)
+        #print("Save button")
+        try:
+            central_freq = int(self.lineEdit.text())
+            bandwith = int(self.lineEdit_2.text())
+            self.frequency_calculate(central_freq,bandwith)
+        except:
+            self.errorPopUp()
         print(central_freq, bandwith)
-
         if self.radioButton.isChecked(): #BANDPASS RADIO BUTTON SELECTED
-            print("bandpass_selected")
-            print(self.f_low, self.f_high) 
-            filtered_data = myFilter.bandpass(self.data,self.f_low,self.f_high,self.samplerate)
-            wavfile.write("C:/Users/furka/Desktop/signalProject/Africa2.wav",self.samplerate,filtered_data.astype(np.int16))
-
+            #print("bandpass_selected")
+            #print(self.f_low, self.f_high) 
+            try:
+                filtered_data = myFilter.bandpass(self.data,self.f_low,self.f_high,self.samplerate)
+                path = Path(self.FILEPATH)
+                wavfile.write(str(path.parent) + "/"+ path.stem +"2.wav",self.samplerate,filtered_data.astype(np.int16))
+                self.savePopUp()
+            except:
+                self.errorPopUp()
         elif self.radioButton_2.isChecked(): #BANDSTOP RADIO BUTTON SELECTED
-            print("bandstop_selected")
-            print(self.f_low, self.f_high)
-            filtered_data = myFilter.bandstop(self.data,self.f_low,self.f_high,self.samplerate)
-            wavfile.write("C:/Users/furka/Desktop/signalProject/Africa2.wav",self.samplerate,filtered_data.astype(np.int16))
-        else:
-            print("pop up bastır")
+            #print("bandstop_selected")
+            #print(self.f_low, self.f_high)
+            try:
+                filtered_data = myFilter.bandstop(self.data,self.f_low,self.f_high,self.samplerate)
+                path = Path(self.FILEPATH)
+                wavfile.write(str(path.parent) + "/"+ path.stem +"2.wav",self.samplerate,filtered_data.astype(np.int16))
+                self.savePopUp()
+            except:
+                self.errorPopUp()
 
-    def get_wav_file(self):
-        print("choose")
-        file_name = QtWidgets.QFileDialog.getOpenFileName(self,"Select wav File",'/',filter="Sound Files (*.wav)")
+        else:
+            self.errorPopUp()
+
         
+    def get_wav_file(self):
+        #print("Choosen file")
+        file_name = QtWidgets.QFileDialog.getOpenFileName(self,"Select wav File",'/',filter="Sound Files (*.wav)")   
         if file_name[0]:
             self.FILEPATH = file_name[0]
-            print(file_name[0])
+            #print(file_name)
             self.samplerate, self.data  = wavfile.read(file_name[0])
-            print(self.samplerate, self.data)
+            #print(self.samplerate, self.data)
             
-    def frequency_calculate(self,central_freq, bandwith):
+    def frequency_calculate(self,central_freq, bandwith):    
         difference = central_freq * (bandwith / 100)
         self.f_low = central_freq - difference # this freq will be lower, but it is used for high pass side 
         self.f_high = central_freq + difference # this freq will be higher. but it is used for low pass side
-        print("f_low = ",self.f_low, "f_high = ",self.f_high)
+        #print("f_low = ",self.f_low, "f_high = ",self.f_high)
+       
 
-  
+    def savePopUp(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("SAVE SUCCESS")
+        path = Path(self.FILEPATH)
+        filename = path.stem
+        path = str(path.parent) #we got only directory file 
+        msg.setText(filename + "2.wav " + "saved in " + path)
+        x = msg.exec_()
+
+
+    def errorPopUp(self):
+        msg = QMessageBox()
+        msg.setWindowTitle("WRONG INPUT")
+        msg.setText("""Some cause an ERROR. It may be because of 
+                    WRONG TYPE INPUT,
+                    EMPTY INPUT FIELD, 
+                    NON SELECTED RADIO TYPE or 
+                    NOT CHOOSING .wav file.""")
+        msg.setIcon(QMessageBox.Critical)
+        x = msg.exec_()
 
 if __name__ == "__main__":
     import sys
